@@ -1,0 +1,155 @@
+
+set $mod Mod4
+
+exec --no-startup-id xsetroot -solid "#333333"
+
+exec --no-startup-id dex --autostart --environment i3
+
+exec --no-startup-id xss-lock --transfer-sleep-lock --i3lock --nofork
+
+exec set -U fish-greeting
+
+exec setxkbmap -option grp:rctrl_toggle
+
+set $refresh_i3status killall -SIGUSR1 i3status 
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+exec --no-startup-id easyeffects --gapplication-service
+exec --no-startup-id gwe --hide-window
+exec --no-startup-id pasystray
+
+bindsym $mod+d exec --no-startup-id "rofi -modi drun,run -show drun"
+
+# I3 PROPERTIES
+
+for_window [class=".*"] border pixel 3
+gaps inner 5 
+gaps outer 5
+mouse_warping output
+floating_maximum_size -1 x -1
+
+font pango:Gohu GohuFont 10 
+
+# class                 border  backgr. text    indicator child_border
+
+client.focused          #ff5e49 #3b4252 #ff5e49 #12181e   #ff5e49
+client.focused_inactive #ff5e49 #2e3440 #ff5e49 #12181e   #12181e
+client.unfocused        #2e3440 #2e3440 #d8dee9 #12181e   #12181e
+client.urgent           #2e3440 #2e3440 #ff5e49 #12181e   #12181e
+client.placeholder      #2e3440 #2e3440 #ff5e49 #12181e   #12181e
+
+bindsym $mod+Escape exec systemctl suspend 
+
+bindsym $mod+Return exec env alacritty
+
+bindsym $mod+Shift+q kill
+
+floating_modifier $mod
+
+bindcode $mod+43 focus left
+bindcode $mod+44 focus down
+bindcode $mod+45 focus up
+bindcode $mod+46 focus right
+
+bindcode $mod+Shift+43 move left
+bindcode $mod+Shift+44 move down
+bindcode $mod+Shift+45 move up
+bindcode $mod+Shift+46 move right
+
+bindsym $mod+b split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+bindsym $mod+a focus parent
+bindsym $mod+z focus child
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+set $ws1 "1:Sys"
+set $ws2 "2:f()"
+set $ws3 "3:Web"
+set $ws4 "4:Comms"
+set $ws5 "5:Game"
+set $ws6 "6:"
+set $ws7 "7:"
+set $ws8 "8:"
+set $ws9 "9:"
+set $ws10 "10 System"
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+
+
+# I3 RESIZE MODE
+
+mode "resize" {
+
+        bindcode 43 resize grow width 4 px or 4 ppt
+        bindcode 44 resize shrink height 4 px or 4 ppt
+        bindcode 45 resize grow height 4 px or 4 ppt
+        bindcode 46 resize shrink width 4 px or 4 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+bar 
+{
+	
+  font pango:Gohu GohuFont 10
+  
+  colors
+  {
+		background #15191c
+		statusline #889784
+  }
+
+  position top
+  
+  tray_output primary
+  tray_padding 4
+  
+  workspace_min_width 60
+  strip_workspace_name no
+  strip_workspace_numbers no
+  
+  separator_symbol "[]"
+  status_command i3status -c ~/.config/i3status/config/i3status.conf
+}

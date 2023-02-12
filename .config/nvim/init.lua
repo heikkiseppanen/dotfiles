@@ -10,6 +10,7 @@ local call = vim.call
 if g.vscode then
 
 else
+
 	--------------------------------------------------------------------------------
 	-- PLUGINS
 	--------------------------------------------------------------------------------
@@ -102,7 +103,7 @@ end
 
 o.autoindent = true
 o.background = 'dark'
-o.colorcolumn = { 100 }
+o.colorcolumn = { 80 }
 o.copyindent = true
 o.cursorline = true
 o.expandtab = false
