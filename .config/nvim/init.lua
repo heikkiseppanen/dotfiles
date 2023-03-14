@@ -6,6 +6,7 @@ local fn = vim.fn
 local api = vim.api
 local cmd = vim.cmd
 local call = vim.call
+local lsp = vim.lsp
 
 if g.vscode then
 
@@ -46,11 +47,21 @@ else
 		api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
 		api.nvim_buf_set_keymap(bufnr, 'n', '<leader>td', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
 		api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+		api.nvim_buf_set_keymap(bufnr, 'i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
 		cmd("set completeopt-=preview")
 	end
 
+	local handlers = {
+		["textDocument/signatureHelp"] = lsp.with(
+			lsp.handlers.signature_help, {
+				border = "single"
+			}
+		)
+	}
+
 	require'lspconfig'.ccls.setup{
 		on_attach = on_attach,
+		handlers = handlers,
 		init_options = {
 			client = {
 				snippetSupport = true
