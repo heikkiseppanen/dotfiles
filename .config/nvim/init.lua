@@ -8,113 +8,129 @@ local cmd = vim.cmd
 local call = vim.call
 local lsp = vim.lsp
 
-if g.vscode then
+--------------------------------------------------------------------------------
+-- PLUGINS
+--------------------------------------------------------------------------------
 
-else
+local Plug = vim.fn['plug#']
 
-	--------------------------------------------------------------------------------
-	-- PLUGINS
-	--------------------------------------------------------------------------------
+call('plug#begin', '~/.local/share/nvim/site/plugged')
 
-	local Plug = vim.fn['plug#']
+Plug('arcticicestudio/nord-vim')
+Plug('morhetz/gruvbox')
 
-	call('plug#begin', '~/.local/share/nvim/site/plugged')
+Plug('neovim/nvim-lspconfig')
 
-	-- Nord theme (4.3.2022)
-	Plug('arcticicestudio/nord-vim', {commit = 'a8256787edbd4569a7f92e4e163308ab8256a6e5'})
+Plug('nvim-lua/plenary.nvim')
+Plug('nvim-telescope/telescope.nvim', {tag = '0.1.4'})
 
-	-- Lspconfig (4.3.2022)
-	Plug('neovim/nvim-lspconfig', {commit = 'cdc2ec53e028d32f06c51ef8b2837ebb8460ef45'})
+Plug('jackguo380/vim-lsp-cxx-highlight', {commit = '0e7476ff41cd65e55f92fdbc7326335ec33b59b0'})
 
-	-- C++ LSP semantic higlights (4.3.2022)
-	Plug('jackguo380/vim-lsp-cxx-highlight', {commit = '0e7476ff41cd65e55f92fdbc7326335ec33b59b0'})
+Plug('42Paris/42header', {commit = '71e6a4df6d72ae87a080282bf45bb993da6146b2'})
 
-	Plug('42Paris/42header', {commit = '71e6a4df6d72ae87a080282bf45bb993da6146b2'})
+Plug('ziglang/zig.vim')
 
-	call('plug#end')
+call('plug#end')
 
-	--------------------------------------------------------------------------------
-	-- LSP CONFIG
-	--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- LSP CONFIG
+--------------------------------------------------------------------------------
 
-	local opts = { noremap = true, silent = true }
+local opts = { noremap = true, silent = true }
 
-	local on_attach = function(client, bufnr)
-		api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-		api.nvim_buf_set_keymap(bufnr, 'n', '<leader>d', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'n', '<leader>td', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-		api.nvim_buf_set_keymap(bufnr, 'i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-		cmd("set completeopt-=preview")
-	end
+local on_attach = function(client, bufnr)
+	api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>d', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>td', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+	cmd("set completeopt=menu,longest")
+end
 
-	local handlers = {
-		["textDocument/signatureHelp"] = lsp.with(
-			lsp.handlers.signature_help, {
-				border = "single"
-			}
-		)
-	}
+local handlers = {
+	["textDocument/signatureHelp"] = lsp.with(
+		lsp.handlers.signature_help, {
+			border = "single"
+		}
+	)
+}
 
-	require'lspconfig'.ccls.setup{
-		on_attach = on_attach,
-		handlers = handlers,
-		init_options = {
-			client = {
-				snippetSupport = true
-				},
-			codeLens = {
-				localVariables = true
+require'lspconfig'.ccls.setup{
+	on_attach = on_attach,
+	handlers = handlers,
+	init_options = {
+		client = {
+			snippetSupport = true
 			},
-			completion = {
-				caseSensitivity = 2,
-				detailedLabel = true,
-				placeholder = false
-			},
-			highlight = {
-				lsRanges = true
-			},
-			index = {
-				threads = 4
-			}
+		codeLens = {
+			localVariables = true
+		},
+		completion = {
+			caseSensitivity = 2,
+			detailedLabel = true,
+			placeholder = true
+		},
+		highlight = {
+			lsRanges = true
+		},
+		index = {
+			threads = 4
 		}
 	}
+	}
 
-	require'lspconfig'.rust_analyzer.setup{
-		on_attach = on_attach,
-		settings = {
-			["rust-analyzer"] = {
-				imports = {
-					granularity = {
-						group = "module",
-					},
-					prefix = "self",
+require'lspconfig'.zls.setup {
+	on_attach = on_attach,
+	handlers = handlers,
+}
+
+require'lspconfig'.rust_analyzer.setup {
+	on_attach = on_attach,
+	settings = {
+		["rust-analyzer"] = {
+			imports = {
+				granularity = {
+					group = "module",
 				},
-				cargo = {
-					buildScripts = {
-						enable = true,
-					},
+				prefix = "self",
+			},
+			cargo = {
+				buildScripts = {
+					enable = true,
 				},
-				procMacro = {
-					enable = true
-				},
-			}
+			},
+			procMacro = {
+				enable = true
+			},
 		}
 	}
+}
+
+local ts = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', ts.find_files, opts)
+vim.keymap.set('n', '<leader>fg', ts.live_grep, opts)
+vim.keymap.set('n', '<leader>fb', ts.buffers, opts)
+vim.keymap.set('n', '<leader>fh', ts.help_tags, opts)
+
 
 g.user42 = 'hseppane'
 g.mail42 = 'marvin@42.ft'
 
 cmd('colorscheme nord')
 
-end
+vim.api.nvim_create_user_command('ProjectOpen',
+	function(options)
+		vim.cmd('args ' .. options.fargs[1] .. '/**/*.*')
+	end,
+	{nargs = 1, complete = 'file'}
+)
 
 o.autoindent = true
 o.background = 'dark'
-o.colorcolumn = { 80 }
+o.colorcolumn = { 80, 120 }
 o.copyindent = true
 o.cursorline = true
 o.expandtab = false
@@ -122,14 +138,16 @@ o.mouse = 'a'
 o.number = true
 o.relativenumber = true
 o.ruler = true
-o.scroll = 5
+o.scroll = 10
 o.shiftwidth = 4
 o.smarttab = true
 o.tabstop = 4
 o.wildmenu = true
+o.wildmode = 'longest:full,full'
 o.wrap = false
 o.list = true
 o.listchars = 'tab:  |'
+o.swapfile = false
 
 g.mapleader = ','
 
