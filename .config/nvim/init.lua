@@ -22,11 +22,11 @@ Plug('morhetz/gruvbox')
 Plug('neovim/nvim-lspconfig')
 
 Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim', {tag = '0.1.4'})
+Plug('nvim-telescope/telescope.nvim')
 
 Plug('jackguo380/vim-lsp-cxx-highlight', {commit = '0e7476ff41cd65e55f92fdbc7326335ec33b59b0'})
 
-Plug('42Paris/42header', {commit = '71e6a4df6d72ae87a080282bf45bb993da6146b2'})
+Plug('42Paris/42header')
 
 Plug('ziglang/zig.vim')
 
@@ -43,7 +43,7 @@ local on_attach = function(client, bufnr)
 	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>d', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 	api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
 	api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-	api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gh', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
 	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>td', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
 	api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
 	api.nvim_buf_set_keymap(bufnr, 'i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -58,29 +58,13 @@ local handlers = {
 	)
 }
 
-require'lspconfig'.ccls.setup{
-	on_attach = on_attach,
+require'lspconfig'.clangd.setup{
+	on_attach = function(client, bufnr)
+	    on_attach(client, bufnr)
+        api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gh', '<cmd>ClangdSwitchSourceHeader<CR>', opts)
+    end,
 	handlers = handlers,
-	init_options = {
-		client = {
-			snippetSupport = true
-			},
-		codeLens = {
-			localVariables = true
-		},
-		completion = {
-			caseSensitivity = 2,
-			detailedLabel = true,
-			placeholder = true
-		},
-		highlight = {
-			lsRanges = true
-		},
-		index = {
-			threads = 4
-		}
-	}
-	}
+}
 
 require'lspconfig'.zls.setup {
 	on_attach = on_attach,
@@ -119,8 +103,6 @@ vim.keymap.set('n', '<leader>fh', ts.help_tags, opts)
 g.user42 = 'hseppane'
 g.mail42 = 'marvin@42.ft'
 
-cmd('colorscheme nord')
-
 vim.api.nvim_create_user_command('ProjectOpen',
 	function(options)
 		vim.cmd('args ' .. options.fargs[1] .. '/**/*.*')
@@ -133,7 +115,7 @@ o.background = 'dark'
 o.colorcolumn = { 80, 120 }
 o.copyindent = true
 o.cursorline = true
-o.expandtab = false
+o.expandtab = true
 o.mouse = 'a'
 o.number = true
 o.relativenumber = true
@@ -150,5 +132,7 @@ o.listchars = 'tab:  |'
 o.swapfile = false
 
 g.mapleader = ','
+g.gruvbox_contrast_dark='hard'
 
+cmd('colorscheme gruvbox')
 cmd("echo 'Custom config loaded succesfully'")
