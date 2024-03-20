@@ -10,10 +10,10 @@ scrolling:
 
 font:
   normal:
-    family: "Misc Tamsyn"
+    family: "Gohu GohuFont"
     style: Regular
   bold:
-    family: "Misc Tamsyn"
+    family: "Gohu GohuFont"
     style: Regular
   size: 7
   offset:

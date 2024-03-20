@@ -58,29 +58,30 @@ local handlers = {
 	)
 }
 
-require'lspconfig'.ccls.setup{
+require'lspconfig'.pyright.setup{
 	on_attach = on_attach,
 	handlers = handlers,
-	init_options = {
-		client = {
-			snippetSupport = true
-			},
-		codeLens = {
-			localVariables = true
-		},
-		completion = {
-			caseSensitivity = 2,
-			detailedLabel = true,
-			placeholder = true
-		},
-		highlight = {
-			lsRanges = true
-		},
-		index = {
-			threads = 4
-		}
-	}
-	}
+	settings = {
+	    python = {
+	        analysis = {
+	            autoSearchPaths = true,
+	            diagnosticMode = 'openFilesOnly',
+	            useLibraryCodeForTypes = true,
+	            typeCheckingMode = 'off'
+            }
+        }
+    },
+}
+
+require'lspconfig'.tsserver.setup{
+	on_attach = on_attach,
+	handlers = handlers,
+}
+
+require'lspconfig'.clangd.setup{
+	on_attach = on_attach,
+	handlers = handlers,
+}
 
 require'lspconfig'.zls.setup {
 	on_attach = on_attach,
@@ -133,7 +134,7 @@ o.background = 'dark'
 o.colorcolumn = { 80, 120 }
 o.copyindent = true
 o.cursorline = true
-o.expandtab = false
+o.expandtab = true
 o.mouse = 'a'
 o.number = true
 o.relativenumber = true
