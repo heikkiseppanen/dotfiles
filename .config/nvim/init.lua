@@ -33,8 +33,42 @@ Plug('ziglang/zig.vim')
 call('plug#end')
 
 --------------------------------------------------------------------------------
--- LSP CONFIG
+-- NVIM CONFIG
 --------------------------------------------------------------------------------
+
+cmd('colorscheme gruvbox')
+
+g.user42 = 'hseppane'
+g.mail42 = 'marvin@42.ft'
+g.mapleader = ','
+
+o.autoindent = true
+o.background = 'dark'
+o.colorcolumn = { 80, 120 }
+o.copyindent = true
+o.cursorline = true
+o.expandtab = true
+o.mouse = 'a'
+o.number = true
+o.relativenumber = true
+o.ruler = true
+o.scroll = 10
+o.shiftwidth = 4
+o.smarttab = true
+o.tabstop = 4
+o.wildmenu = true
+o.wildmode = 'longest:full,full'
+o.wrap = false
+o.list = true
+o.listchars = 'tab:  |'
+o.swapfile = false
+
+vim.api.nvim_create_user_command('ProjectOpen',
+	function(options)
+		vim.cmd('args ' .. options.fargs[1] .. '/**/*.*')
+	end,
+	{nargs = 1, complete = 'file'}
+)
 
 local opts = { noremap = true, silent = true }
 
@@ -115,41 +149,5 @@ vim.keymap.set('n', '<leader>ff', ts.find_files, opts)
 vim.keymap.set('n', '<leader>fg', ts.live_grep, opts)
 vim.keymap.set('n', '<leader>fb', ts.buffers, opts)
 vim.keymap.set('n', '<leader>fh', ts.help_tags, opts)
-
-
-g.user42 = 'hseppane'
-g.mail42 = 'marvin@42.ft'
-
-cmd('colorscheme gruvbox')
-
-vim.api.nvim_create_user_command('ProjectOpen',
-	function(options)
-		vim.cmd('args ' .. options.fargs[1] .. '/**/*.*')
-	end,
-	{nargs = 1, complete = 'file'}
-)
-
-o.autoindent = true
-o.background = 'dark'
-o.colorcolumn = { 80, 120 }
-o.copyindent = true
-o.cursorline = true
-o.expandtab = true
-o.mouse = 'a'
-o.number = true
-o.relativenumber = true
-o.ruler = true
-o.scroll = 10
-o.shiftwidth = 4
-o.smarttab = true
-o.tabstop = 4
-o.wildmenu = true
-o.wildmode = 'longest:full,full'
-o.wrap = false
-o.list = true
-o.listchars = 'tab:  |'
-o.swapfile = false
-
-g.mapleader = ','
 
 cmd("echo 'Custom config loaded succesfully'")
