@@ -1,10 +1,7 @@
-
 set $mod Mod4
 
 exec --no-startup-id xsetroot -solid "#333333"
-
 exec --no-startup-id dex --autostart --environment i3
-
 exec --no-startup-id xss-lock --transfer-sleep-lock --i3lock --nofork
 
 exec set -U fish-greeting
@@ -19,8 +16,14 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 exec --no-startup-id gwe --hide-window
 exec --no-startup-id pasystray
 exec --no-startup-id easyeffects --gapplication-service
+exec --no-startup-id keepassxc
 
-bindsym $mod+d exec --no-startup-id "rofi -modi drun,run -show drun"
+# WORKSPACE 1
+
+exec --no_startup-id i3-msg "workspace 1; append_layout $HOME/.config/i3/ws1.json"
+exec alacritty --working-directory $HOME/prog
+exec alacritty --working-directory $HOME/prog
+exec firefox
 
 # I3 PROPERTIES
 
@@ -42,9 +45,11 @@ client.unfocused        #2e3440 #2e3440 #ffffff #ffffff
 client.urgent           #2e3440 #2e3440 #ff5e49 #12181e   #12181e
 client.placeholder      #2e3440 #2e3440 #ff5e49 #12181e   #12181e
 
+bindsym $mod+d exec --no-startup-id "rofi -modi drun,run -show drun"
+
 bindsym $mod+Escape exec systemctl suspend 
 
-bindsym $mod+Return exec env alacritty
+bindsym $mod+Return exec alacritty
 
 bindsym $mod+Shift+q kill
 
@@ -130,13 +135,13 @@ bindsym $mod+r mode "resize"
 
 bar 
 {
-	
+
   font pango:Terminus 9 
   
   colors
   {
-		background #15191c
-		statusline #889784
+    background #15191c
+    statusline #889784
   }
 
   position top
