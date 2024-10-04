@@ -32,14 +32,14 @@ blinking = "Always"
 shape = "Block"
 
 [font]
-size = 7
+size = 8
 
 [font.bold]
-family = "Gohu GohuFont"
+family = "Misc Tamsyn"
 style = "Regular"
 
 [font.normal]
-family = "Gohu GohuFont"
+family = "Misc Tamsyn"
 style = "Regular"
 
 [font.offset]
@@ -59,3 +59,6 @@ opacity = 1
 [window.padding]
 x = 10
 y = 10
+
+[env]
+WINIT_X11_SCALE_FACTOR = "1.5"
