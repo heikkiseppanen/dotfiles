@@ -1,27 +1,3 @@
-vim.o.autoindent = true
-vim.o.background = 'dark'
-vim.o.colorcolumn = '80,120'
-vim.o.shell = vim.fn.filereadable('/bin/fish') == 1 and '/bin/fish' or '/bin/bash'
-vim.o.copyindent = true
-vim.o.cursorline = true
-vim.o.expandtab = true
-vim.o.mouse = 'a'
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.ruler = true
-vim.o.scroll = 10
-vim.o.shiftwidth = 4
-vim.o.smarttab = true
-vim.o.tabstop = 4
-vim.o.wildmenu = true
-vim.o.wildmode = 'longest:full,full'
-vim.o.wrap = false
-vim.o.list = true
-vim.o.listchars = 'tab:  |'
-vim.o.swapfile = false
-vim.o.updatetime = 500
-
-vim.g.mapleader = ' '
 
 --------------------------------------------------------------------------------
 -- PLUGINS
@@ -48,20 +24,47 @@ Plug('ziglang/zig.vim')
 vim.call('plug#end')
 
 --------------------------------------------------------------------------------
+vim.o.autoindent = true
+vim.o.background = 'dark'
+vim.o.colorcolumn = '80,120'
+vim.o.shell = vim.fn.filereadable('/bin/fish') == 1 and '/bin/fish' or '/bin/bash'
+vim.o.copyindent = true
+vim.o.cursorline = true
+vim.o.expandtab = true
+vim.o.mouse = 'a'
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.ruler = true
+vim.o.scroll = 10
+vim.o.shiftwidth = 4
+vim.o.smarttab = true
+vim.o.tabstop = 4
+vim.o.wildmenu = true
+vim.o.wildmode = 'longest:full,full'
+vim.o.wrap = false
+vim.o.list = true
+vim.o.listchars = 'tab:  |'
+vim.o.swapfile = false
+vim.o.updatetime = 500
+vim.o.equalalways = false
 
-local opts = { noremap = true, silent = true }
-
-local telescope = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', telescope.find_files, opts)
-vim.keymap.set('n', '<leader>fg', telescope.live_grep, opts)
-vim.keymap.set('n', '<leader>fb', telescope.buffers, opts)
-vim.keymap.set('n', '<leader>fh', telescope.help_tags, opts)
+vim.g.mapleader = ' '
 
 vim.g.user42 = 'hseppane'
 vim.g.mail42 = 'marvin@42.ft'
 
-vim.cmd('colorscheme gruvbox')
 vim.g.gruvbox_contrast_dark='hard'
+
+vim.cmd('colorscheme gruvbox')
+
+local opts = { noremap = true, silent = true }
+
+local telescope = require('telescope.builtin')
+
+vim.keymap.set('n', '<leader>ff', telescope.find_files, opts)
+vim.keymap.set('n', '<leader>fg', telescope.live_grep, opts)
+vim.keymap.set('n', '<leader>fb', telescope.buffers, opts)
+vim.keymap.set('n', '<leader>fh', telescope.help_tags, opts)
 
 local on_attach = function(client, bufnr)
     local options = { buffer = bufnr, noremap = true, silent = true }
@@ -104,11 +107,15 @@ require'lspconfig'.tsserver.setup{
 }
 
 require'lspconfig'.clangd.setup{
+    cmd = { "clangd", "-j", "16", "--background-index"},
     on_attach = function(client, bufnr)
         on_attach(client, bufnr)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gh', '<cmd>ClangdSwitchSourceHeader<CR>', opts)
     end,
     handlers = handlers,
+    initialization_options = {
+        fallback_flags = {'-std=c++17'},
+    },
 }
 
 require'lspconfig'.zls.setup {
@@ -146,24 +153,17 @@ require'lspconfig'.rust_analyzer.setup {
 require'lspconfig'.lua_ls.setup {
     on_attach = on_attach,
     handlers = handlers,
-    on_init = function(client)
-        local path = client.workspace_folders[1].name
-        if vim.loop.fs_stat(path..'/.luarc.json') or vim.loop.fs_stat(path..'/.luarc.json') then
-            return
-        end
-
-        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-            runtime = { version = 'LuaJit' },
-            workspace = {
-                checkThirdParty = false,
-                library = { vim.env.VIMRUNTIME },
-            }
-        })
-    end,
     settings = {
         Lua = {
+            runtime = 'LuaJIT',
+            diagnostics = {
+                globals = { 'vim' }
+            },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true)
+            },
             telemetry = false,
-        }
+        },
     }
 }
 
@@ -190,7 +190,7 @@ vim.api.nvim_create_autocmd( {'TermOpen', 'TermEnter'}, {
 
 vim.api.nvim_create_user_command('ProjectOpen',
     function(options)
-        vim.cmd('args ' .. options.fargs[1] .. '/**/*.*')
+        vim.cmd('args ' .. options.fargs[1] .. '**/*.*')
     end,
     {nargs = 1, complete = 'file'}
 )
